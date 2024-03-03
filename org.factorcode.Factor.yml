@@ -1,0 +1,96 @@
+id: org.factorcode.Factor
+runtime: org.freedesktop.Platform
+runtime-version: '23.08'
+sdk: org.freedesktop.Sdk
+command: factor
+finish-args:
+  - --share=ipc
+  - --share=network
+  - --filesystem=home
+  - --socket=pulseaudio
+  - --socket=x11
+  - --device=dri
+modules:
+  - shared-modules/gtk2/gtk2.json
+  - shared-modules/glu/glu-9.json
+  - name: pangox
+    sources:
+      - type: archive
+        sha256: 552092b3b6c23f47f4beee05495d0f9a153781f62a1c4b7ec53857a37dfce046
+        url: https://download.gnome.org/sources/pangox-compat/0.0/pangox-compat-0.0.2.tar.xz
+      - type: patch
+        path: patches/pangox/find_shaper.patch
+  - name: gtkglext
+    cleanup:
+      - /lib/gtkglext-1.0/include
+    sources:
+      - type: archive
+        sha256: e5073f3c6b816e7fa67d359d9745a5bb5de94a628ac85f624c992925a46844f9
+        url: https://netcologne.dl.sourceforge.net/project/gtkglext/gtkglext/1.2.0/gtkglext-1.2.0.tar.gz
+      - type: patch
+        path: patches/gtkglext-1.2.0/01_fix_fontcache_nullderef.diff
+      - type: patch
+        path: patches/gtkglext-1.2.0/02_fix_gtk-2.20_deprecated_symbols.diff
+      - type: patch
+        path: patches/gtkglext-1.2.0/libGL.so.1.diff
+      - type: patch
+        path: patches/gtkglext-1.2.0/03_gdkglext-config-h-installation-path.diff
+      - type: patch
+        path: patches/gtkglext-1.2.0/glibc2.27-ftbfs.diff
+      - type: shell
+        commands:
+          - cp -p /usr/share/automake-*/config.{sub,guess} .
+  - name: openal-soft
+    buildsystem: cmake-ninja
+    sources:
+      - type: archive
+        sha256: 796f4b89134c4e57270b7f0d755f0fa3435b90da437b745160a49bd41c845b21
+        url: https://github.com/kcat/openal-soft/releases/download/1.23.1/openal-soft-1.23.1.tar.bz2
+  - name: libalut
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DBUILD_EXAMPLES=OFF
+      - -DBUILD_TESTS=OFF
+    sources:
+      - type: archive
+        sha256: c27347599499020bcfcd48c9a44349ba1847ecd92c484da562f3c005d750da2e
+        url: https://github.com/vancegroup/freealut/archive/469287bd7dbf32ef33886366b08fe2b8087a9eb1.tar.gz
+  - name: raylib
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DBUILD_SHARED_LIBS=ON
+    sources:
+      - type: archive
+        sha256: 98f049b9ea2a9c40a14e4e543eeea1a7ec3090ebdcd329c4ca2cf98bc9793482
+        url: https://github.com/raysan5/raylib/archive/refs/tags/5.0.tar.gz
+  - name: raygui
+    buildsystem: simple
+    build-commands:
+      - mv src/raygui.h src/raygui.c
+      - gcc -o /app/lib/libraygui.so src/raygui.c -shared -fpic -DRAYGUI_IMPLEMENTATION -L/app/lib -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+    sources:
+      - type: archive
+        sha256: 299c8fcabda68309a60dc858741b76c32d7d0fc533cdc2539a55988cee236812
+        url: https://github.com/raysan5/raygui/archive/refs/tags/4.0.tar.gz
+  - name: factor
+    buildsystem: simple
+    build-commands:
+      - bash -O extglob -c 'for f in /usr/lib/$(uname -m)-linux-gnu/*.so.+([0-9]); do ln -s $f /app/lib/$(basename ${f%.*}); done'
+      - make -j $FLATPAK_BUILDER_N_JOBS REPRODUCIBLE=1 linux-`uname -m | sed -e s/aarch64/arm-64/ -e s/x86_64/x86-64/`
+      - ./factor -i=boot.unix-`uname -m | sed -e s/aarch64/arm.64/ -e s/x86_64/x86.64/`.image
+      - mkdir /app/share/factor
+      - install factor /app/share/factor/
+      - cp -r factor.image basis core extra /app/share/factor/
+      - ln -s ../share/factor/factor /app/bin/factor
+      - mkdir -p /app/share/icons/hicolor/scalable/apps /app/share/applications /app/share/metainfo
+      - cp misc/icons/Factor.svg /app/share/icons/hicolor/scalable/apps/org.factorcode.Factor.svg
+      - cp org.factorcode.Factor.desktop /app/share/applications/
+      - cp org.factorcode.Factor.metainfo.xml /app/share/metainfo/
+    sources:
+      - type: archive
+        url: https://downloads.factorcode.org/releases/0.99/factor-src-0.99.zip
+        sha256: f5626bb3119bd77de9ac3392fdbe188bffc26557fab3ea34f7ca21e372a8443e
+      - type: file
+        path: org.factorcode.Factor.desktop
+      - type: file
+        path: org.factorcode.Factor.metainfo.xml

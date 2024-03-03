@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2024 Val Packett -->
+<component type="desktop-application">
+  <id>org.factorcode.Factor</id>
+
+  <name>Factor</name>
+  <summary>Concatenative, stack-based programming language</summary>
+  <developer id="org.factorcode">
+    <name>The Factor Contributors</name>
+  </developer>
+  <url type="homepage">https://factorcode.org/</url>
+  <url type="vcs-browser">https://github.com/factor/factor</url>
+  <url type="bugtracker">https://github.com/factor/factor/issues</url>
+  <url type="contribute">https://concatenative.org/wiki/view/Factor/FAQ/Contribute</url>
+  <url type="faq">https://concatenative.org/wiki/view/Factor/FAQ</url>
+  <url type="help">https://docs.factorcode.org/content/article-handbook.html</url>
+  <content_rating type="oars-1.1"/>
+  <update_contact>val@packett.cool</update_contact>
+
+  <metadata_license>FSFAP</metadata_license>
+  <project_license>BSD-2-Clause</project_license>
+
+  <description>
+    <p>
+      The Factor programming language is a concatenative, stack-based programming language with high-level features including dynamic types, extensible syntax, macros, and garbage collection. On a practical side, Factor has a full-featured library, supports many different platforms, and has been extensively documented.
+    </p>
+    <p>
+      The implementation is fully compiled for performance, while still supporting interactive development. Factor applications are portable between all common platforms. Factor can deploy stand-alone applications on all platforms. Full source code for the Factor project is available under a BSD license.
+    </p>
+  </description>
+
+  <screenshots>
+    <screenshot type="default">
+      <image>https://files.catbox.moe/sfmxna.png</image>
+      <caption>Factor running multiple included demo programs</caption>
+    </screenshot>
+  </screenshots>
+
+  <releases>
+    <release version="0.99" date="2023-08-24">
+      <url type="details">https://re.factorcode.org/2023/08/factor-0-99-now-available.html</url>
+      <description>
+        <p>Release description</p>
+        <ul>
+          <li>170 new libraries</li>
+          <li>179 improved libraries</li>
+          <li>Added a Guided Tour of Factor</li>
+          <li>Upgraded to Unicode 15</li>
+          <li>The fixups vocabulary makes upgrading easier when words are renamed</li>
+          <li>Windows binaries now include OpenSSL 3.1.2 and SQLite 3.42.0 for convenience</li>
+          <li>Re-added some support for FreeBSD</li>
+          <li>Improved non-English text entry on macOS</li>
+          <li>Removed support for 32-bit macOS</li>
+          <li>File editors are now specified using EDITOR: syntax</li>
+          <li>Switched to newer ucrtbase.dll on Windows</li>
+          <li>Support disassembly using Capstone in addition to Udis86</li>
+          <li>String literals must be separated by whitespace – "hello"length and "foo""bar"append are no longer accepted by the parser</li>
+          <li>The fry and locals syntax words are now in syntax for use in all vocabularies</li>
+          <li>Any word can be referred to by it’s fully-qualified name (e.g., math:+ or xml.writer:pprint-xml)</li>
+          <li>The Emacs “FUEL” and VIM plugins have been updated</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
+
+  <launchable type="desktop-id">org.factorcode.Factor.desktop</launchable>
+
+  <provides>
+    <binary>factor</binary>
+  </provides>
+</component>
